@@ -1,0 +1,101 @@
+<?php
+
+/**
+ * Class: Oglasi
+ * 
+ */
+class Oglasi extends Controller
+{
+    public function index()
+    {
+        header('Location: ' .URL. '/pretraga');
+    }
+
+    /**
+     * izmjena_form
+     * obrazac za izmjenu oglasa
+     * @var object $detalji sve pojedinosti odabranog oglasa
+     * @var object $kategorije dohvacanje kategorija za prikaz
+     */
+    public function izmjena_form($id)
+    {
+        $izmjena_model = $this->loadModel('IzmjenaModel');
+        $detalji  = $izmjena_model->getDetails($id);
+
+        $pretraga_model = $this->loadModel('PretragaModel');
+        $kategorije = $pretraga_model->getAllKategorija();
+
+        require ('application/views/oglasi/izmjena.php');
+    }
+
+    /**
+     * izmjena
+     * 
+     * spremanje izmjenjenog oglasa
+     */
+    public function izmjena()
+    {
+        if (isset($_POST['submit_changes'])) {
+            $id = $_POST['id'];
+            $naslov = $_POST['naslov'];
+            $opis = $_POST['opis'];
+            $cijena = $_POST['cijena'];
+            $kategorija = $_POST['kategorija'];
+            if ($_POST['aktivan'] == 'DA') {
+                $aktivan = 1;
+            } else {
+                $aktivan = 0;
+            }
+
+            $izmjena_model = $this->loadModel('IzmjenaModel');
+            $izmjena_model->changeOglas($id, $naslov, $opis, $cijena, $kategorija, $aktivan);
+        }
+
+        header('Location: ' .URL. '/pretraga/privatni');
+    }
+
+    /**
+     * predaja
+     * 
+     * prikaz obrasca za predaju novog oglasa
+     * @var object $kategorije dohvacanje kategorija za prikaz
+     */
+    public function predaja()
+    {
+        $model = $this->loadModel('predajaModel');
+        $kategorije = $model->getKategorija();
+
+        require('application/views/oglasi/predaja.php');
+    }
+
+    /**
+     * noviOglas
+     * 
+     * spremanje predanog oglasa
+     */
+    public function noviOglas()
+    {
+        if (isset($_POST['submit_predaja'])) {
+            $id_user = $_SESSION['id'];      //id korisnika -> veza korisnik-oglas
+            $naslov = $_POST['naslov'];
+            $opis = $_POST['opis'];
+            $cijena = $_POST['cijena'];
+            $kategorija = $_POST['kategorija'];
+
+            $model = $this->loadModel('predajaModel');
+            $save = $model->spremiOglas($id_user, $naslov, $opis, $cijena, $kategorija);
+        }
+        header('Location: ' .URL. '/pretraga/privatni');
+    }
+
+    /**
+     * brisi
+     * 
+     * brisanje odabranog oglasa
+     */
+    public function brisi($id){
+        $model = $this->loadModel('PredajaModel');
+        $brisi = $model->delete($id);
+        header('Location: ' .URL. '/pretraga/privatni');
+    }
+}

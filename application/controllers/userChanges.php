@@ -1,0 +1,82 @@
+<?php
+/**
+ * class: UseChanges
+ * 
+ * Userchanges controller
+ * promjene podataka i lozinke korisnika
+ */
+class UserChanges extends Controller
+{
+    /**
+     * index
+     * 
+     * prikaz obrasva za izmejnu lozinke
+     */
+    public function index()
+    {
+        require('application/views/userChanges/passForm.php');
+    }
+
+    /**
+     * changePass
+     * 
+     * spremanje nove lozinke
+     * @var string $old stara lozinka za provjeru
+     * @var string $new nova lozinka
+     * @var string $new_check za provjeru nove
+     * 
+     */
+    public function changePass()
+    {
+        if (isset($_POST['submit_pass'])) {
+            $id_user = $_SESSION['id'];
+            $old = md5($_POST['pass_old']);
+            $new = md5($_POST['pass']);
+            $new_check = md5($_POST['pass_check']);
+
+            if ($new != $new_check) {
+                require('application/views/userChanges/wrong.php');
+            } else {
+                $model = $this->loadModel('UserChangesModel');
+                $change = $model->changePass($id_user, $old, $new);       //u modelu provjerit
+            }
+        }
+    }
+
+    /**
+     * data
+     * 
+     * obrazac za promjenu podataka korisnika
+     * @var object $data trenutni podaci o korsniku
+     * @var int $zupanije id zupanije za prikaz u obrascu
+     */
+    public function data()
+    {
+        $id = $_SESSION['id'];
+        $model = $this->loadModel('UserChangesModel');
+        $data = $model->getData($id);
+        $zupanije = $model->getZupanija();
+
+        require('application/views/userChanges/details.php');
+    }
+
+    /**
+     * savedata
+     * 
+     * spremanje novih podataka
+     */
+    public function savedata()
+    {
+        if (isset($_POST['submit'])) {
+            $id = $_SESSION['id'];
+            $ime = $_POST['ime'];
+            $prezime = $_POST['prezime'];
+            $email = $_POST['email'];
+            $zupanija = $_POST['zupanija'];
+            $br_tel = $_POST['tel'];
+            $model = $this->loadModel('UserChangesModel');
+            $save = $model->saveData($id, $ime, $prezime, $email, $zupanija, $br_tel);
+        }
+        header('Location: ' .URL. '/dash');
+    }
+}

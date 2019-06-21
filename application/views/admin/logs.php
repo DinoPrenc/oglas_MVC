@@ -1,0 +1,27 @@
+<h1><a href="<?php echo URL ?>">Oglasnik</a></h1>
+<h2>Pregled logova</h2>
+<table border=1>
+    <tr>
+        <td>Broj log</td>
+        <td>ID korisnika</td>
+        <td>Vrijeme pristupa</td>
+        <td>Koristeni preglednik</td>
+        <td>IP adresa pristupa</td>
+        <td>Uspijesna prijava</td>
+        <td>Informacije</td>
+    </tr>
+    <?php
+    foreach($logs as $log) {
+        echo '<tr>';
+        echo '<td>' . $log->log_no . '</td>';
+        echo '<td>' . $log->id_user . '</td>';
+        echo '<td>' . $log->time . '</td>';
+        echo '<td>' . $log->user_agent . '</td>';
+        echo '<td>' . $log->ip . '</td>';
+        echo '<td>' . $log->success_login . '</td>';
+        echo '<td>' . $log->stat . '</td>';
+        echo '</tr>';
+    }
+    ?>
+</table>
+<p><a href="<?php echo URL ?>/dash">Natrag</a></p>

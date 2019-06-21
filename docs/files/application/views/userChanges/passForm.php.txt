@@ -1,0 +1,8 @@
+<h1><a href="<?php echo URL ?>">Oglasnik</a></h1>
+<h2>Promjena lozinke</h2>
+<form method="post" action="<?php echo URL ?>/userChanges/changePass">
+<p>Stara lozinka: <input type="password" name="pass_old"></p>
+<p>Unesi novu lozinku: <input type="password" name="pass"></p>
+<p>Ponovo unesi novu lozinku: <input type="password" name="pass_check"></p>
+<p><input type="submit" name="submit_pass" value="Promjena"></p>
+<p><a href="<?php echo URL ?>/dash">Natrag</a></p>

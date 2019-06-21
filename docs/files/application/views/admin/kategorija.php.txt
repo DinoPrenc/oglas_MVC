@@ -1,0 +1,8 @@
+<?php
+echo '<h1><a href=" ' .URL. ' ">Oglasnik</a></h1>';
+echo '<h2>Dodavanje nove kategorije</h2>';
+echo '<form method="post" action=" ' .URL. '/admin/spremiKat">';
+echo '<p>Naziv kategorije: <input type="text" name="kat" value=""></p>';
+echo '<p><input type="submit" name="submit_kat" value="Dodaj kategoriju"></p>';
+echo '</form>';
+echo '<p><a href=" ' .URL. '/dash">Natrag</a></p>';

@@ -1,0 +1,80 @@
+<?php
+/**
+ * class: pretraga
+ * 
+ * pretraga controller
+ */
+class Pretraga extends Controller
+{
+
+    /**
+     * index
+     * 
+     * dohvacanje svih oglasa prema zadanoj kljucnoj rijeci ili kategoriji
+     * @var string $keyword rijec prema kojoj se pretrazuje
+     * @var int $kat id_kategorija za pretragu
+     */
+    public function index()
+    {
+        $pretraga_model = $this->loadModel('PretragaModel');
+        $oglasi = $pretraga_model->getAllOglasiASCPrice('', 0);
+        $kategorije = $pretraga_model->getAllKategorija();
+
+        if (isset($_POST['trazi'])) {
+            $keyword = $_POST['search'];
+            $order = $_POST['order'];
+            $kat = $_POST['kategorija'];
+            $kat = intval($kat);
+            if ($order != 'DESC') {
+                $oglasi = $pretraga_model->getAllOglasiASCPrice($keyword, $kat);
+            } else {
+                $oglasi = $pretraga_model->getAllOglasiDESCPrice($keyword, $kat);
+            }
+        }
+
+        require 'application/views/pretraga/index.php';
+    }
+
+    /**
+     * privatni
+     * 
+     * dohvacanje svih oglasa prema zadanoj kljucnoj rijeci ili kategoriji koje je objavio prijavljeni korisnik
+     * @var string $keyword rijec prema kojoj se pretrazuje
+     * @var int $kat id_kategorija za pretragu
+     */
+    public function privatni()
+    {
+        $pretraga_model = $this->loadModel('PretragaModel');
+        $oglasi = $pretraga_model->getPrivatniOglasiASCPrice('', 0);
+        $kategorije = $pretraga_model->getAllKategorija();
+
+        if (isset($_POST['trazi'])) {
+            $keyword = $_POST['search'];
+            $order = $_POST['order'];
+            $kat = $_POST['kategorija'];
+            $kat = intval($kat);
+            if ($order != 'DESC') {
+                $oglasi = $pretraga_model->getPrivatniOglasiASCPrice($keyword, $kat);
+            } else {
+                $oglasi = $pretraga_model->getPrivatniOglasiDESCPrice($keyword, $kat);
+            }
+        }
+
+        require 'application/views/pretraga/privatni.php';
+    }
+
+    /**
+     * pregled
+     * 
+     * pregled detalja za odabrani oglas
+     * @var string $email kontakt email oglasivaca
+     */
+    public function pregled($id)
+    {
+        $pregled_model = $this->loadModel('PretragaModel');
+        $data = $pregled_model->pregled($id);
+        $email = $pregled_model->getContactEmail($data->id_user);
+
+        require('application/views/pretraga/pregled.php');
+    }
+}

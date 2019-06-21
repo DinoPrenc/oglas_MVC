@@ -1,0 +1,87 @@
+<?php
+/**
+ * Class: Admin
+ *
+ * Admin controller
+ *
+ */
+class Admin extends Controller{
+
+    public function index(){
+        if($_SESSION['admin'] != 1){
+            header('Location:' .URL);
+        }
+        require ('application/views/admin/index.php');
+    }
+
+    /**
+     * kategorijaForm
+     * 
+     * Prikazuje obrazac za dodavanje nove kategorije
+     */
+    public function kategorijaForm()
+    {
+        if($_SESSION['admin'] != 1){
+            header('Location:' .URL);
+        }
+        require ('application/views/admin/kategorija.php');
+    }
+
+    /**
+     * spremiKat
+     * 
+     * Sprema novo dodanu kategoriju
+     * @var string $kat naziv nove kategorije
+     */
+    public function spremiKat(){
+        if($_SESSION['admin'] != 1){
+            header('Location:' .URL);
+        }
+        if(isset($_POST['submit_kat'])){
+            $kat = $_POST['kat'];
+
+            $model = $this->loadModel('AdminModel');
+            $save = $model->spremiKat($kat);
+        }
+        header('Location: ' .URL. '/dash');
+    }
+
+    /**
+     * stats
+     * 
+     * statistika za prikaz
+     * @var  int $users broj postojecih korisnika
+     * @var  int $oglasi broj oglasa
+     * @var int $kategorije broj kategorija
+     * @var int $logs broj prijava
+     * @var int $pogledi sveukupan broj pogleda oglasa
+     */
+    public function stats(){
+        if($_SESSION['admin'] != 1){
+            header('Location:' .URL);
+        }
+        $model = $this->loadModel('AdminModel');
+        $users = $model->getUsers();
+        $oglasi = $model->getOglasi();
+        $kategorije = $model->getKategorije();
+        $logs = $model->getNumLogs();
+        $pogledi = $model->getPogledi();
+
+        require ('application/views/admin/stats.php');
+    }
+
+    /**
+     * logs
+     * 
+     * prikaz svih logova
+     */
+    public function logs(){
+        if($_SESSION['admin'] != 1){
+            header('Location:' .URL);
+        }
+        $model = $this->loadModel('AdminModel');
+        $logs = $model->getLogs();
+
+        require ('application/views/admin/logs.php');
+    }
+}

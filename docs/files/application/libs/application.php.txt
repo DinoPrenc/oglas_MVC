@@ -1,0 +1,72 @@
+<?php
+
+class Application
+{
+    private $url_controller = null;
+    private $url_action = null;
+    private $url_parameter_1 = null;
+    private $url_parameter_2 = null;
+    private $url_parameter_3 = null;
+
+    /**
+     * Pocetak aplikacije
+     * Ucitavanje kontrolera,metoda, argumenata...
+     * Parsiranje URL-a tako da je prilagoden MVC obliku: domena/kontroler/metoda/argumenti
+     */
+    public function __construct()
+    {
+        $this->splitUrl();
+
+        //provjera ako controller postoji
+        if (file_exists('./application/controllers/' . $this->url_controller . '.php')) {
+
+            // ako postoji napravi controller
+            require './application/controllers/' . $this->url_controller . '.php';
+            $this->url_controller = new $this->url_controller();
+
+            //provjera ako metoda postoji
+            if (method_exists($this->url_controller, $this->url_action)) {
+
+                //pozivanje metode i slanje argumenata
+                if (isset($this->url_parameter_3)) {
+                    $this->url_controller->{$this->url_action}($this->url_parameter_1, $this->url_parameter_2, $this->url_parameter_3);
+                } elseif (isset($this->url_parameter_2)) {
+                    $this->url_controller->{$this->url_action}($this->url_parameter_1, $this->url_parameter_2);
+                } elseif (isset($this->url_parameter_1)) {
+                    $this->url_controller->{$this->url_action}($this->url_parameter_1);
+                } else {
+                    $this->url_controller->{$this->url_action}();
+                }
+            } else {
+                $this->url_controller->index();
+            }
+        } else {
+            //ako se ne podudara vracanje na home/index
+            require './application/controllers/home.php';
+            $home = new Home();
+            $home->index();
+        }
+    }
+
+    /**
+     * parsiranje URL-a
+     */
+    private function splitUrl()
+    {
+        if (isset($_GET['url'])) {
+            $url = rtrim($_GET['url'], '/');
+            $url = filter_var($url, FILTER_SANITIZE_URL);
+            $url = explode('/', $url);
+
+            $this->url_controller = (isset($url[0]) ? $url[0] : null);
+            $this->url_action = (isset($url[1]) ? $url[1] : null);
+            $this->url_parameter_1 = (isset($url[2]) ? $url[2] : null);
+            $this->url_parameter_2 = (isset($url[3]) ? $url[3] : null);
+            $this->url_parameter_3 = (isset($url[4]) ? $url[4] : null);
+        }
+
+        $params = array($this->url_parameter_1, $this->url_parameter_2, $this->url_parameter_3);
+        return $params;
+    }
+}
+

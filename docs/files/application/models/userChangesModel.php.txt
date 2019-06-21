@@ -1,0 +1,51 @@
+<?php
+class UserChangesModel
+{
+    function __construct($db)
+    {
+        try {
+            $this->db = $db;
+        } catch (PDOException $e) {
+            exit('Nemogu se povezati sa bazom!');
+        }
+    }
+
+    public function changePass($id, $old, $new)
+    {
+        $check_sql = "SELECT password FROM user WHERE id_user=$id";
+        $ch_q = $this->db->prepare($check_sql);
+        $ch_q->execute();
+        $check = $ch_q->fetch();
+        if ($check != $old) {
+            require('application/views/userChanges/wrong.php');
+            return 0;
+        } else {
+            $sql = "UPDATE user SET password=$new WHERE id_user=$id";
+            $query = $this->db->prepare($sql);
+            $query->execute();
+        }
+    }
+
+    public function getData($id){
+        $sql = "SELECT * FROM user WHERE id_user=$id";
+        $query = $this->db->prepare($sql);
+        $query->execute();
+
+        return $query->fetch();
+    }
+
+    public function getZupanija(){
+        $sql = "SELECT * FROM zupanija";
+        $query = $this->db->prepare($sql);
+        $query->execute();
+
+        return $query;
+    }
+
+    public function saveData($id, $ime, $prezime, $email, $zupanija, $br_tel){
+        $sql = "UPDATE user SET ime='$ime', prezime='$prezime', id_zupanija='$zupanija', email='$email', br_tel='$br_tel' WHERE id_user=$id";
+        $query = $this->db->prepare($sql);
+        $query->execute();
+    }
+}
+
